@@ -66,6 +66,22 @@ def main():
     canvas = np.full((side, side), 255, np.uint8)
     canvas[:, :] = out[y0 : y0 + side, x0 : x0 + side].astype(np.uint8)
 
+    # A black suit below the collar turns into a solid block once it is
+    # downsampled. Keep the frame on the head and shoulders instead.
+    lower = canvas[int(canvas.shape[0] * 0.62) :]
+    if lower.size and float(np.median(lower)) < 12:
+        med = np.median(canvas, axis=1)
+        lit = np.where(med > 40)[0]
+        ink = np.where(canvas < 230)
+        if len(lit) and len(ink[0]):
+            top_i = max(0, int(ink[0].min()) - 6)
+            bot_i = min(canvas.shape[0], int(lit.max()) + max(12, int(canvas.shape[0] * 0.06)))
+            height = max(32, bot_i - top_i)
+            cols = ink[1][(ink[0] >= top_i) & (ink[0] < top_i + height)]
+            cx = int((cols.min() + cols.max()) / 2) if len(cols) else canvas.shape[1] // 2
+            x_i = max(0, min(canvas.shape[1] - height, cx - height // 2))
+            canvas = canvas[top_i : top_i + height, x_i : x_i + height]
+
     Image.fromarray(canvas, mode="L").save(OUT)
     print("wrote", OUT, canvas.shape)
 
