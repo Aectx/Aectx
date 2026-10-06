@@ -1,18 +1,18 @@
 <div align="center">
 
-<h3><code>aectx@github ~ $ ./contributions.sh</code></h3>
+<img src="./override.svg" width="860" alt="SYSTEM OVERRIDE" />
 
-<img src="./contrib-heatmap.svg" width="860" alt="GitHub contribution graph, refreshed daily" />
+<br>
+
+<img src="./contrib-heatmap.svg" width="860" alt="Contribution graph" />
 
 <br>
 <br>
-
-<h3><code>aectx@github ~ $ whoami</code></h3>
 
 <table>
 <tr>
 <td valign="top"><img src="./ascii.svg" width="420" alt="ASCII portrait" /></td>
-<td valign="top"><img src="./info-card.svg" width="420" alt="Profile card" /></td>
+<td valign="top"><img src="./info-card.svg" width="420" alt="Warning panel" /></td>
 </tr>
 </table>
 

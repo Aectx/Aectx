@@ -1,12 +1,12 @@
 {
   "login": "Aectx",
   "name": "Rahul Singh",
-  "prompt": "aectx@github",
-  "tagline": "github.com/Aectx",
+  "prompt": "root@aectx",
+  "tagline": "SYSTEM OVERRIDE",
   "lines": [
-    ["now", "Python"],
-    ["lang", "Python"],
-    ["repo", "movies"],
-    ["joined", "Aug 2024"]
+    ["IDENTITY", "Rahul Singh"],
+    ["HANDLE", "@Aectx"],
+    ["TRACE", "FAILED"],
+    ["FIREWALL", "DOWN"]
   ]
 }

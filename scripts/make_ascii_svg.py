@@ -46,12 +46,13 @@ ART_H = ROWS * CELL_H
 CANVAS_W = ART_W + PAD * 2
 CANVAS_H = TITLEBAR_H + ART_H + STATUS_H + PAD
 
-BG = "#0d1117"
-BG2 = "#111722"
-FRAME = "#30363d"
-TITLE_TEXT = "#7d8590"
-INK = "#c9d1d9"
-CURSOR = "#c9d1d9"
+BG = "#050203"
+BG2 = "#120406"
+FRAME = "#e10600"
+TITLE_TEXT = "#ff4d4d"
+INK = "#e8e6e3"
+CURSOR = "#ff2a2a"
+GLITCH = "#ff1a1a"
 
 ROW_DUR = 5.8 / ROWS
 STAGGER = ROW_DUR
@@ -93,11 +94,11 @@ def build(rows_txt):
         f'fill="none" stroke="{FRAME}" stroke-width="1"/>',
         f'<line x1="0" y1="{TITLEBAR_H}" x2="{CANVAS_W:.0f}" y2="{TITLEBAR_H}" stroke="{FRAME}"/>',
     ]
-    for i, dotcol in enumerate(["#ff5f56", "#ffbd2e", "#27c93f"]):
+    for i, dotcol in enumerate(["#ff2a2a", "#8f1d24", "#4a0d12"]):
         parts.append(f'<circle cx="{PAD + i * 16}" cy="{TITLEBAR_H / 2}" r="5" fill="{dotcol}"/>')
     parts.append(
         f'<text x="{CANVAS_W / 2:.0f}" y="{TITLEBAR_H / 2 + 4}" fill="{TITLE_TEXT}" font-size="12" '
-        f'text-anchor="middle">{PROMPT}: ~$ ./portrait.sh</text>'
+        f'text-anchor="middle">{PROMPT}:~$ ./override.sh</text>'
     )
 
     for ry, line in enumerate(rows_txt):
@@ -126,18 +127,55 @@ def build(rows_txt):
             f'<set attributeName="opacity" to="0" begin="{delay + ROW_DUR:.3f}s"/></rect>'
         )
 
+    # Thick red slices through the portrait. They jitter sideways and loop.
+    ink_rows = [i for i, line in enumerate(rows_txt) if sum(c != " " for c in line) > 18]
+    if len(ink_rows) >= 6:
+        anchors = [ink_rows[len(ink_rows) // 5], ink_rows[len(ink_rows) // 2], ink_rows[(3 * len(ink_rows)) // 4]]
+    else:
+        anchors = ink_rows[:3]
+    for bi, anchor in enumerate(anchors):
+        band = [anchor]
+        if anchor + 1 < len(rows_txt):
+            band.append(anchor + 1)
+        row_y = art_top + band[0] * CELL_H
+        band_h = CELL_H * len(band)
+        shift = (14, -18, 11)[bi % 3]
+        slices = []
+        for ry in band:
+            y = art_top + ry * CELL_H + CELL_H * 0.74
+            safe = html.escape(rows_txt[ry])
+            slices.append(
+                f'<text xml:space="preserve" x="{PAD}" y="{y:.1f}" fill="{GLITCH}" '
+                f'font-size="{font_size:.2f}" textLength="{ART_W:.1f}" lengthAdjust="spacing">{safe}</text>'
+            )
+        bar = (
+            f'<rect x="{PAD}" y="{row_y:.1f}" width="{ART_W:.1f}" height="{band_h:.1f}" '
+            f'fill="{GLITCH}" opacity="0.18"/>'
+        )
+        body = bar + "".join(slices)
+        if STATIC:
+            parts.append(f'<g transform="translate({shift} 0)">{body}</g>')
+            continue
+        parts.append(
+            f'<g>{body}'
+            f'<animateTransform attributeName="transform" type="translate" '
+            f'values="0 0; {shift} 0; 0 0; {-shift // 2} 0; 0 0" '
+            f'begin="{6.2 + bi * 0.35:.2f}s" dur="1.6s" repeatCount="indefinite"/>'
+            f'</g>'
+        )
+
     status_line_y = TITLEBAR_H + ART_H + PAD * 0.35
     status_y = status_line_y + 19
-    status = f"{PROMPT}:~$ whoami {NAME} "
+    status = f"{PROMPT}:~$ TRACE FAILED "
     parts.append(
-        f'<line x1="0" y1="{status_line_y:.1f}" x2="{CANVAS_W:.0f}" y2="{status_line_y:.1f}" stroke="{FRAME}"/>'
+        f'<line x1="0" y1="{status_line_y:.1f}" x2="{CANVAS_W:.0f}" y2="{status_line_y:.1f}" stroke="{FRAME}" stroke-opacity="0.7"/>'
     )
     parts.append(
         f'<text x="{PAD}" y="{status_y:.1f}" fill="{TITLE_TEXT}" font-size="13">'
-        f'{PROMPT}:~$ whoami <tspan fill="{INK}">{html.escape(NAME)}</tspan></text>'
+        f'{PROMPT}:~$ <tspan fill="{INK}">TRACE FAILED</tspan></text>'
     )
     parts.append(
-        f'<rect x="{PAD + len(status) * 13 * 0.60:.1f}" y="{status_y - 12:.1f}" width="8" height="14" fill="{INK}">'
+        f'<rect x="{PAD + len(status) * 13 * 0.60:.1f}" y="{status_y - 12:.1f}" width="8" height="14" fill="{GLITCH}">'
         f'<animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.5;0.51;1" '
         f'dur="1s" repeatCount="indefinite"/></rect>'
     )

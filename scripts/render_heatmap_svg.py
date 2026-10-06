@@ -14,7 +14,7 @@ OUT_PATH = os.path.join(HERE, "..", "contrib-heatmap.svg")
 with open(os.path.join(HERE, "profile.json")) as f:
     PROMPT = json.load(f)["prompt"]
 
-PALETTE = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]
+PALETTE = ["#140406", "#4a0d12", "#8f1d24", "#e10600", "#ff4d4d"]
 CELL = 11
 GAP = 3
 STEP = CELL + GAP
@@ -23,13 +23,13 @@ LEFT_LABEL_W = 32
 TOP_LABEL_H = 22
 TITLEBAR_H = 30
 
-BG = "#0d1117"
-BG2 = "#111722"
-FRAME = "#30363d"
-MUTED = "#7d8590"
-ACCENT = "#22d3ee"
-GREEN = "#3fb950"
-GOLD = "#f2cc60"
+BG = "#050203"
+BG2 = "#120406"
+FRAME = "#e10600"
+MUTED = "#a34a4a"
+ACCENT = "#ff2a2a"
+GREEN = "#ff2a2a"
+GOLD = "#ffb4b4"
 
 COL_T = 0.016
 ROW_T = 0.04
@@ -100,11 +100,11 @@ def render(data):
         f'fill="none" stroke="{FRAME}"/>',
         f'<line x1="0" y1="{TITLEBAR_H}" x2="{canvas_w}" y2="{TITLEBAR_H}" stroke="{FRAME}"/>',
     ]
-    for i, dot in enumerate(["#ff5f56", "#ffbd2e", "#27c93f"]):
+    for i, dot in enumerate(["#ff2a2a", "#8f1d24", "#4a0d12"]):
         parts.append(f'<circle cx="{PAD + i * 16}" cy="{TITLEBAR_H / 2}" r="5" fill="{dot}"/>')
     parts.append(
-        f'<text x="{canvas_w / 2:.0f}" y="{TITLEBAR_H / 2 + 4}" fill="{MUTED}" font-size="12" '
-        f'text-anchor="middle">{PROMPT}: ~/contributions --graph</text>'
+        f'<text x="{canvas_w / 2:.0f}" y="{TITLEBAR_H / 2 + 4}" fill="{ACCENT}" font-size="12" '
+        f'text-anchor="middle">{PROMPT}:~/graph --corrupt</text>'
     )
 
     grid_top = TITLEBAR_H + TOP_LABEL_H
@@ -117,20 +117,38 @@ def render(data):
         y = grid_top + wi * STEP + CELL * 0.8
         parts.append(f'<text x="{PAD}" y="{y:.1f}" fill="{MUTED}" font-size="10">{wname}</text>')
 
-    for ci, column in enumerate(grid):
-        gx = grid_left + ci * STEP
-        for ri, cell in enumerate(column):
+    for ri in range(7):
+        # Two weekday rows sit torn out of line, then jitter.
+        torn = ri in (2, 5)
+        shift = 8 if ri == 2 else -7
+        cells = []
+        for ci, column in enumerate(grid):
+            cell = column[ri]
             if cell is None:
                 continue
             date_s, count, level = cell
+            if count == 0 and (ci + ri) % 9 == 0:
+                continue
+            gx = grid_left + ci * STEP
             gy = grid_top + ri * STEP
             delay = ci * COL_T + ri * ROW_T
             plural = "s" if count != 1 else ""
-            parts.append(
+            cells.append(
                 f'<rect class="c" x="{gx}" y="{gy}" width="{CELL}" height="{CELL}" rx="2" '
                 f'fill="{PALETTE[level]}" style="animation-delay:{delay:.3f}s">'
                 f"<title>{date_s}: {count} contribution{plural}</title></rect>"
             )
+        body = "".join(cells)
+        if torn:
+            parts.append(
+                f"<g>{body}"
+                f'<animateTransform attributeName="transform" type="translate" '
+                f'values="0 0; {shift} 0; 0 0; {-shift // 2} 0; 0 0" '
+                f'begin="2.4s" dur="2.2s" repeatCount="indefinite"/>'
+                f"</g>"
+            )
+        else:
+            parts.append(body)
 
     leg_y = grid_top + art_h + 8
     lx = canvas_w - PAD - len(PALETTE) * (CELL + 2)
