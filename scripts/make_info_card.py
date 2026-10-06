@@ -26,19 +26,35 @@ RED = "#ff1a1a"
 DIM = "#7a181c"
 
 
-def glitch_text(x, y, text, size, fill, dx, delay, anchor="start"):
+def glitch_text(x, y, text, size, dx, delay, anchor="start", clip_id="gslice"):
+    """Green SYSTEM OVERRIDE title: offset copies plus a fast sliced band."""
+    green = "#39ff14"
+    dim = "#0b3d12"
+    hot = "#b6ff9a"
     body = (
-        f'<text x="{x + dx}" y="{y}" fill="{DIM}" font-size="{size}" font-weight="700" text-anchor="{anchor}">{text}</text>'
-        f'<text x="{x - dx}" y="{y}" fill="{RED}" font-size="{size}" font-weight="700" opacity="0.85" text-anchor="{anchor}">{text}</text>'
-        f'<text x="{x}" y="{y}" fill="{fill}" font-size="{size}" font-weight="700" text-anchor="{anchor}">{text}</text>'
+        f'<text x="{x + dx}" y="{y}" fill="{dim}" font-size="{size}" font-weight="700" text-anchor="{anchor}">{text}</text>'
+        f'<text x="{x - dx}" y="{y}" fill="{hot}" font-size="{size}" font-weight="700" opacity="0.8" text-anchor="{anchor}">{text}</text>'
+        f'<text x="{x}" y="{y}" fill="{green}" font-size="{size}" font-weight="700" text-anchor="{anchor}">{text}</text>'
+    )
+    band_y = y - size * 0.72
+    band_h = size * 0.28
+    sliced = (
+        f'<clipPath id="{clip_id}"><rect x="0" y="{band_y:.1f}" width="100%" height="{band_h:.1f}">'
+        f'<animate attributeName="y" values="{band_y:.1f};{band_y + size * 0.45:.1f};{band_y + size * 0.15:.1f};{band_y:.1f}" '
+        f'dur="0.7s" repeatCount="indefinite"/></rect></clipPath>'
+        f'<g clip-path="url(#{clip_id})">'
+        f'<text x="{x}" y="{y}" fill="{green}" font-size="{size}" font-weight="700" text-anchor="{anchor}">{text}</text>'
+        f'<animateTransform attributeName="transform" type="translate" '
+        f'values="0 0; {dx * 2} 0; {-dx * 2} 0; {dx} 0; 0 0" dur="0.45s" repeatCount="indefinite"/>'
+        f"</g>"
     )
     if STATIC:
-        return f'<g transform="translate({dx} 0)">{body}</g>'
+        return f'<g transform="translate({dx // 2} 0)">{body}</g>'
     return (
-        f"<g>{body}"
+        f"<g>{body}{sliced}"
         f'<animateTransform attributeName="transform" type="translate" '
         f'values="0 0; {dx} 0; {-dx // 2} 0; 0 0" '
-        f'begin="{delay:.2f}s" dur="1.5s" repeatCount="indefinite"/>'
+        f'begin="{delay:.2f}s" dur="1.4s" repeatCount="indefinite"/>'
         f"</g>"
     )
 
@@ -63,7 +79,7 @@ def write_banner():
         f'font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">',
         f'<rect width="{bw}" height="{bh}" fill="{BG}"/>',
         f'<rect x="1" y="1" width="{bw - 2}" height="{bh - 2}" fill="none" stroke="{FRAME}" stroke-width="2"/>',
-        glitch_text(bw / 2, 68, title, 42, "#ffffff", 8, 0.2, anchor="middle"),
+        glitch_text(bw / 2, 68, title, 42, 8, 0.2, anchor="middle", clip_id="bannerSlice"),
         "</svg>",
     ]
     with open(BANNER, "w") as f:
@@ -84,7 +100,7 @@ def main():
         f'<rect x="2" y="2" width="{W - 4}" height="{H - 4}" fill="none" stroke="{FRAME}" stroke-width="2"/>',
         f'<rect x="10" y="10" width="{W - 20}" height="{H - 20}" fill="none" stroke="{FRAME}" stroke-opacity="0.35"/>',
     ]
-    parts.append(glitch_text(48, 150, "SYSTEM OVERRIDE", 34, "#ffffff", 7, 0.4))
+    parts.append(glitch_text(48, 150, "SYSTEM OVERRIDE", 34, 7, 0.4, clip_id="cardSlice"))
     parts.append(
         f'<text x="48" y="196" fill="{MUTED}" font-size="16">root@{login} // signal unstable</text>'
     )
