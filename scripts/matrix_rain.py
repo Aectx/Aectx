@@ -7,7 +7,7 @@ import random
 GLYPHS = "0123456789ABCDEF"
 
 
-def matrix_rain(width, height, spacing=32, opacity=0.22, prefix="rain", static=False):
+def matrix_rain(width, height, spacing=32, opacity=0.22, prefix="rain", static=False, length=None):
     rng = random.Random(prefix)
     cols = max(6, int(width / spacing))
     parts = [
@@ -16,7 +16,7 @@ def matrix_rain(width, height, spacing=32, opacity=0.22, prefix="rain", static=F
     ]
     for i in range(cols):
         x = int(spacing * 0.35 + i * spacing)
-        count = rng.randint(8, 14)
+        count = length or rng.randint(8, 14)
         glyphs = [rng.choice(GLYPHS) for _ in range(count)]
         line_h = 15
         column_h = count * line_h

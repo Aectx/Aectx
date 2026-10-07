@@ -97,8 +97,8 @@ def render(data):
         f'<linearGradient id="hbg" x1="0" y1="0" x2="0" y2="1">'
         f'<stop offset="0" stop-color="{BG2}"/><stop offset="1" stop-color="{BG}"/>'
         f"</linearGradient></defs>",
-        f'<rect width="{canvas_w}" height="{canvas_h}" rx="12" fill="url(#hbg)"/>',
-        matrix_rain(canvas_w, canvas_h, spacing=34, opacity=0.16, prefix="heatRain"),
+        f'<!--BG--><rect width="{canvas_w}" height="{canvas_h}" rx="12" fill="url(#hbg)"/><!--/BG-->',
+        f'<!--RAIN-->{matrix_rain(canvas_w, canvas_h, spacing=34, opacity=0.16, prefix="heatRain")}<!--/RAIN-->',
         f'<rect x="0.5" y="0.5" width="{canvas_w - 1}" height="{canvas_h - 1}" rx="12" '
         f'fill="none" stroke="{FRAME}"/>',
         f'<line x1="0" y1="{TITLEBAR_H}" x2="{canvas_w}" y2="{TITLEBAR_H}" stroke="{FRAME}"/>',

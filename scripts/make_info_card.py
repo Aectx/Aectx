@@ -79,8 +79,8 @@ def write_banner():
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw}" height="{bh}" viewBox="0 0 {bw} {bh}" '
         f'font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">',
-        f'<rect width="{bw}" height="{bh}" fill="{BG}"/>',
-        matrix_rain(bw, bh, spacing=26, opacity=0.28, prefix="bannerRain", static=STATIC),
+        f'<!--BG--><rect width="{bw}" height="{bh}" fill="{BG}"/><!--/BG-->',
+        f'<!--RAIN-->{matrix_rain(bw, bh, spacing=26, opacity=0.28, prefix="bannerRain", static=STATIC)}<!--/RAIN-->',
         f'<rect x="1" y="1" width="{bw - 2}" height="{bh - 2}" fill="none" stroke="{FRAME}" stroke-width="2"/>',
         glitch_text(bw / 2, 68, title, 42, 8, 0.2, anchor="middle", clip_id="bannerSlice"),
         "</svg>",
@@ -99,8 +99,8 @@ def main():
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
         f'font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">',
-        f'<rect width="{W}" height="{H}" fill="{BG}"/>',
-        matrix_rain(W, H, spacing=34, opacity=0.2, prefix="cardRain", static=STATIC),
+        f'<!--BG--><rect width="{W}" height="{H}" fill="{BG}"/><!--/BG-->',
+        f'<!--RAIN-->{matrix_rain(W, H, spacing=34, opacity=0.2, prefix="cardRain", static=STATIC)}<!--/RAIN-->',
         f'<rect x="2" y="2" width="{W - 4}" height="{H - 4}" fill="none" stroke="{FRAME}" stroke-width="2"/>',
         f'<rect x="10" y="10" width="{W - 20}" height="{H - 20}" fill="none" stroke="{FRAME}" stroke-opacity="0.35"/>',
     ]

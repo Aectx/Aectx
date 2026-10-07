@@ -9,8 +9,9 @@ mkdir -p "$ROOT/logs"
 PY="$ROOT/.venv/bin/python"
 "$PY" scripts/fetch_contributions.py
 "$PY" scripts/render_heatmap_svg.py
+"$PY" scripts/compose_profile.py
 
-git add data/contributions.json contrib-heatmap.svg
+git add data/contributions.json contrib-heatmap.svg profile.svg
 if git diff --cached --quiet; then
   echo "no changes $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   exit 0
