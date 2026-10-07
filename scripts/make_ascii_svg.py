@@ -13,6 +13,8 @@ import json
 import os
 import sys
 
+from matrix_rain import matrix_rain
+
 from PIL import Image, ImageEnhance
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -90,6 +92,7 @@ def build(rows_txt):
         f'<stop offset="0" stop-color="{BG2}"/><stop offset="1" stop-color="{BG}"/>'
         f"</linearGradient></defs>",
         f'<rect width="{CANVAS_W:.0f}" height="{CANVAS_H:.0f}" rx="12" fill="url(#bg)"/>',
+        matrix_rain(CANVAS_W, CANVAS_H, spacing=36, opacity=0.16, prefix="asciiRain", static=STATIC),
         f'<rect x="0.5" y="0.5" width="{CANVAS_W - 1:.0f}" height="{CANVAS_H - 1:.0f}" rx="12" '
         f'fill="none" stroke="{FRAME}" stroke-width="1"/>',
         f'<line x1="0" y1="{TITLEBAR_H}" x2="{CANVAS_W:.0f}" y2="{TITLEBAR_H}" stroke="{FRAME}"/>',
